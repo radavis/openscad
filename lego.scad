@@ -8,6 +8,7 @@ v_pitch = 9.6;   // vertical unit
 tol = 0.1;       // "play" in x and y directions
 k_dia = 4.8;     // knob diameter
 k_height = 1.8;  // knob height
+k_n = 40;         // knob resolution
 wall = 1.2;      // wall thickness
 
 brick_cyl_ex = 8*sqrt(2)-2*2.4;
@@ -15,13 +16,13 @@ brick_cyl_in = 4.8;
 beam_cyl = 3.0;
 
 module knob() {
-  cylinder(h = k_height, r = k_dia/2);
+  cylinder(h = k_height, r = k_dia/2, $fn=k_n);
 }
 
 module brick_cylinder(height=v_pitch) {
   difference() {
     cylinder(h=height, r=brick_cyl_ex/2);
-    cylinder(h=height, r=brick_cyl_in/2);
+    cylinder(h=height, r=brick_cyl_in/2+tol, $fn=k_n);
   }
 }
 
@@ -55,11 +56,12 @@ module build_brick(col, row, height) {
 
   // internal cylinders
   if (row == 1) {
-    for (i = [1:col-1]) {
-      translate([h_pitch*i, h_pitch/2, 0])
-      beam_cylinder(height);
+    if (col > 1) {
+      for (i = [1:col-1]) {
+        translate([h_pitch*i, h_pitch/2, 0])
+        beam_cylinder(height);
+      }
     }
-
   } else if (col == 1) {
     for (j = [1:row-1]) {
       translate([h_pitch/2, h_pitch*j, 0])
@@ -91,6 +93,12 @@ module plate(col, row) {
 
 // let's build some parts!
 brick(2);
+
+translate([-20, 0, 0])
+plate(1,1);
+
+translate([-20, 10, 0])
+beam(1);
 
 translate([20, 0, 0])
 brick(4);
