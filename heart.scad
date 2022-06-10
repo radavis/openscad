@@ -1,12 +1,15 @@
-module flat_heart() {
-  square(20);
+module flat_heart(size = 20) {
+  square(size);
 
-  translate([10, 20, 0])
-  circle(10);
+  translate([size/2, size, 0])
+  circle(size/2);
 
-  translate([20, 10, 0])
-  circle(10);
+  translate([size, size/2, 0])
+  circle(size/2);
 }
 
-linear_extrude(height = 13) 
-flat_heart();
+module gross_heart(size = 20, h = 4) {
+  linear_extrude(height=h) flat_heart(size);
+}
+
+gross_heart(20);
